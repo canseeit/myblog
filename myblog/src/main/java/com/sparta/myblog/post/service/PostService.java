@@ -35,6 +35,7 @@ public class PostService {
         postRepository.save(post);
         return new PostResponseDto(post);
     }
+
     @Transactional(readOnly = true)
     public List<PostResponseDto> getAllPosts() {
         // 전체 조회
@@ -58,7 +59,6 @@ public class PostService {
             throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
-
         post.update(requestDto);
         return new PostResponseDto(post);
     }
@@ -71,7 +71,7 @@ public class PostService {
 
         // 작성자가 일치하거나 ADMIN이 아니면 던지기
         if (!post.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
-            throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
+            throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 게시글 삭제

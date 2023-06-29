@@ -1,7 +1,6 @@
 package com.sparta.myblog.jwt;
 
 import com.sparta.myblog.exception.ApiException;
-import com.sparta.myblog.exception.ApiResult;
 import com.sparta.myblog.user.entity.User;
 import com.sparta.myblog.user.repository.UserRepository;
 import io.jsonwebtoken.*;

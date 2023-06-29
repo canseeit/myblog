@@ -70,7 +70,7 @@ public class CommentService {
 
         // 작성자가 일치하거나 ADMIN이 아니면 던지기
         if (!comment.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
-            throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
+            throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
         commentRepository.delete(comment);

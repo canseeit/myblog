@@ -1,8 +1,8 @@
 package com.sparta.myblog.user.service;
 
 import com.sparta.myblog.exception.ApiException;
-import com.sparta.myblog.jwt.JwtUtil;
 import com.sparta.myblog.exception.ApiResult;
+import com.sparta.myblog.jwt.JwtUtil;
 import com.sparta.myblog.user.dto.LoginRequestDto;
 import com.sparta.myblog.user.dto.SignupRequestDto;
 import com.sparta.myblog.user.entity.User;
@@ -49,12 +49,9 @@ public class UserService {
                 () -> new ApiException("사용자를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST)
         );
 
-        if (!userEntity.getUsername().equals(username)) {
-            throw new ApiException("사용자를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
         // 비밀번호 확인
         if (!userEntity.getPassword().equals(password)) {
-            throw new ApiException("사용자를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+            throw new ApiException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
         // JWT Token 생성 및 반환
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(userEntity.getUsername()));

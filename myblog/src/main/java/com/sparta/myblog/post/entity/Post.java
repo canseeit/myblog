@@ -5,7 +5,6 @@ import com.sparta.myblog.comment.entity.Comment;
 import com.sparta.myblog.post.dto.PostRequestDto;
 import com.sparta.myblog.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

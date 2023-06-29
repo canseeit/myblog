@@ -1,6 +1,5 @@
 package com.sparta.myblog.post.dto;
 
-import com.sparta.myblog.comment.dto.CommentRequestDto;
 import com.sparta.myblog.comment.dto.CommentResponseDto;
 import com.sparta.myblog.comment.entity.Comment;
 import com.sparta.myblog.post.entity.Post;
