@@ -22,5 +22,4 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String message = "서버 오류가 발생했습니다.";
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

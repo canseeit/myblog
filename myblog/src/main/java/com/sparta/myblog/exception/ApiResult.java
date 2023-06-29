@@ -12,7 +12,6 @@ public class ApiResult {
     private String msg;
     private Integer statusCode;
 
-    @Builder
     public ApiResult(String msg, Integer statusCode) {
         this.msg = msg;
         this.statusCode = statusCode;

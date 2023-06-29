@@ -54,7 +54,7 @@ public class PostService {
         // 토큰 체크
         User user = jwtUtil.checkToken(request);
 
-        // 작성자가 일치하거나 ADMIN이 아니면 던지기
+        // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
         if (!post.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
             throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
@@ -69,7 +69,7 @@ public class PostService {
         // 토큰 체크
         User user = jwtUtil.checkToken(request);
 
-        // 작성자가 일치하거나 ADMIN이 아니면 던지기
+        // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
         if (!post.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
             throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
