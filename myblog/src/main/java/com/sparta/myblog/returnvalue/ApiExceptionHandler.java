@@ -1,4 +1,4 @@
-package com.sparta.myblog.exception;
+package com.sparta.myblog.returnvalue;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     // 기본 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
-        String message = "서버 오류가 발생했습니다.";
-        return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        String msg = "서버 오류가 발생했습니다.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

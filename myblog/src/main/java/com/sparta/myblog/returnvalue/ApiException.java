@@ -1,4 +1,4 @@
-package com.sparta.myblog.exception;
+package com.sparta.myblog.returnvalue;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

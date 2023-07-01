@@ -1,8 +1,8 @@
 package com.sparta.myblog.post.service;
 
 
-import com.sparta.myblog.exception.ApiException;
-import com.sparta.myblog.exception.ApiResult;
+import com.sparta.myblog.returnvalue.ApiException;
+import com.sparta.myblog.returnvalue.ApiResult;
 import com.sparta.myblog.jwt.JwtUtil;
 import com.sparta.myblog.post.dto.PostRequestDto;
 import com.sparta.myblog.post.dto.PostResponseDto;

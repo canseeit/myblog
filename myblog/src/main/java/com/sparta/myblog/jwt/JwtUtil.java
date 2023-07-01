@@ -1,6 +1,6 @@
 package com.sparta.myblog.jwt;
 
-import com.sparta.myblog.exception.ApiException;
+import com.sparta.myblog.returnvalue.ApiException;
 import com.sparta.myblog.user.entity.User;
 import com.sparta.myblog.user.repository.UserRepository;
 import io.jsonwebtoken.*;
@@ -49,7 +49,7 @@ public class JwtUtil {
 
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER); // 파라미터로 가져올 값을 넣어주면 됨
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) { // 코드가 있는지, BEARER로 시작하는지 확인
-            resolvedToken = bearerToken.substring(7); // 앞에 7글자를 지워줌 BEARER가 6글자이고 한칸이 띄어져있기때문
+            resolvedToken = bearerToken.substring(7); // 앞에 7글자를 지워줌 BEARER가 6글자이고 한칸이 띄어져있기 때문
         }
         return resolvedToken;
     }
@@ -95,7 +95,7 @@ public class JwtUtil {
         String token = this.resolveToken(request);
         Claims claims;
 
-        User userEntity = null;
+        User user = null;
 
         if (token != null) {
             if (this.validateToken(token)) {
@@ -105,10 +105,10 @@ public class JwtUtil {
                 throw new ApiException("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            userEntity = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+            user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new ApiException("사용자 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST)
             );
         }
-        return userEntity;
+        return user;
     }
 }

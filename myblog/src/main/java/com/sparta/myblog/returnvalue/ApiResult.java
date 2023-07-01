@@ -1,6 +1,5 @@
-package com.sparta.myblog.exception;
+package com.sparta.myblog.returnvalue;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
