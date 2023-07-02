@@ -1,6 +1,6 @@
 package com.sparta.myblog.comment.entity;
 
-import com.sparta.myblog.Timestapmed.Timestamped;
+import com.sparta.myblog.common.Timestapmed.Timestamped;
 import com.sparta.myblog.post.entity.Post;
 import com.sparta.myblog.user.entity.User;
 import jakarta.persistence.*;
@@ -27,6 +27,6 @@ public class Comment extends Timestamped {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "username", referencedColumnName = "username")
+    @JoinColumn(name = "login_id", referencedColumnName = "login_id")
     private User user;
 }

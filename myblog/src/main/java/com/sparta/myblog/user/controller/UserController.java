@@ -1,10 +1,7 @@
 package com.sparta.myblog.user.controller;
 
-import com.sparta.myblog.returnvalue.ApiResult;
-import com.sparta.myblog.user.dto.LoginRequestDto;
-import com.sparta.myblog.user.dto.ProfileRequestDto;
-import com.sparta.myblog.user.dto.ProfileResponseDto;
-import com.sparta.myblog.user.dto.SignupRequestDto;
+import com.sparta.myblog.common.returnvalue.ApiResult;
+import com.sparta.myblog.user.dto.*;
 import com.sparta.myblog.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +29,11 @@ public class UserController {
     @GetMapping("/profile")
     public ProfileResponseDto getProfile(HttpServletRequest request) {
         return userService.getProfile(request);
+    }
+
+    @PostMapping("/profile")
+    public ApiResult checkPassword(@RequestBody PasswordRequestDto requestDto, HttpServletRequest request) {
+        return userService.checkPassword(requestDto, request);
     }
 
     @PutMapping("/profile")

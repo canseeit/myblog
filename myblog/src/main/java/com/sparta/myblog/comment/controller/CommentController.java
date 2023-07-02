@@ -3,7 +3,7 @@ package com.sparta.myblog.comment.controller;
 import com.sparta.myblog.comment.dto.CommentRequestDto;
 import com.sparta.myblog.comment.dto.CommentResponseDto;
 import com.sparta.myblog.comment.service.CommentService;
-import com.sparta.myblog.returnvalue.ApiResult;
+import com.sparta.myblog.common.returnvalue.ApiResult;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

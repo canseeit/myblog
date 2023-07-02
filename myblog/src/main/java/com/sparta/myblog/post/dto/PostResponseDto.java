@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -26,10 +27,9 @@ public class PostResponseDto {
         this.username = post.getUser().getUsername();
         this.createAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
-        this.commentList = new ArrayList<>();
-        for (Comment comment : post.getCommentList()) {
-            CommentResponseDto commentDto = new CommentResponseDto(comment);
-            this.commentList.add(commentDto);
-        }
+        this.commentList = post.getCommentList().stream()
+                .map(CommentResponseDto::new)
+                .sorted(Comparator.comparing(CommentResponseDto::getCreatedAt).reversed()) // 작성날짜 내림차순
+                .toList();
     }
 }

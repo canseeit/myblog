@@ -1,6 +1,6 @@
-package com.sparta.myblog.jwt;
+package com.sparta.myblog.common.jwt;
 
-import com.sparta.myblog.returnvalue.ApiException;
+import com.sparta.myblog.common.returnvalue.ApiException;
 import com.sparta.myblog.user.entity.User;
 import com.sparta.myblog.user.repository.UserRepository;
 import io.jsonwebtoken.*;
@@ -55,12 +55,12 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username) {
+    public String createToken(String id) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(username) // 공간에 username을 넣음
+                        .setSubject(id) // 공간에 username을 넣음
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 토큰을 언제까지 유효하게 할 것인지 getTime으로 현재 시간을 가지고 오며 현재 시간으로부터 우리가 설정한 시간동안 토큰 유효
                         .setIssuedAt(date) // 토큰이 언제 만들어졌는가
                         .signWith(key, signatureAlgorithm) // 어떤 알고리즘을 사용하여 암호화 할 것인가
@@ -105,7 +105,7 @@ public class JwtUtil {
                 throw new ApiException("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+            user = userRepository.findById(claims.getSubject()).orElseThrow(
                     () -> new ApiException("사용자 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST)
             );
         }

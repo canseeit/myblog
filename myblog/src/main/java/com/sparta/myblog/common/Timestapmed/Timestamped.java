@@ -1,4 +1,4 @@
-package com.sparta.myblog.Timestapmed;
+package com.sparta.myblog.common.Timestapmed;
 
 import jakarta.persistence.*;
 import lombok.Getter;

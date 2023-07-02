@@ -1,11 +1,8 @@
 package com.sparta.myblog.user.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
 @Getter
-public class LoginRequestDto {
-    private String id;
+public class PasswordRequestDto {
     private String password;
 }

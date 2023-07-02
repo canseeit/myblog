@@ -1,4 +1,4 @@
-package com.sparta.myblog.returnvalue;
+package com.sparta.myblog.common.returnvalue;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.sparta.myblog.post.entity;
 
-import com.sparta.myblog.Timestapmed.Timestamped;
+import com.sparta.myblog.common.Timestapmed.Timestamped;
 import com.sparta.myblog.comment.entity.Comment;
 import com.sparta.myblog.post.dto.PostRequestDto;
 import com.sparta.myblog.user.entity.User;
@@ -30,7 +30,7 @@ public class Post extends Timestamped {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "username", referencedColumnName = "username")
+    @JoinColumn(name = "login_id", referencedColumnName = "login_id")
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)

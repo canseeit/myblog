@@ -1,6 +1,6 @@
 package com.sparta.myblog.post.controller;
 
-import com.sparta.myblog.returnvalue.ApiResult;
+import com.sparta.myblog.common.returnvalue.ApiResult;
 import com.sparta.myblog.post.dto.PostRequestDto;
 import com.sparta.myblog.post.dto.PostResponseDto;
 import com.sparta.myblog.post.service.PostService;
