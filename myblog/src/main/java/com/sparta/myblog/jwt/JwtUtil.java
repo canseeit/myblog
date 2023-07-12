@@ -1,9 +1,6 @@
 package com.sparta.myblog.jwt;
 
 import com.sparta.myblog.entity.UserRoleEnum;
-import com.sparta.myblog.exception.ApiException;
-import com.sparta.myblog.entity.User;
-import com.sparta.myblog.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -12,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -38,23 +34,11 @@ public class JwtUtil {
     private String secretKey;
     private Key key; // Token을 만들 때 넣어줄 Key 값
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    private final UserRepository userRepository;
 
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey); // 디코드 하는 과정
         key = Keys.hmacShaKeyFor(bytes);
-    }
-
-    private String resolveToken(HttpServletRequest request) { // HttpServletRequset 안에는 우리가 가져와야 할 토큰이 헤더에 들어있음
-
-        String resolvedToken = null;
-
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); // 파라미터로 가져올 값을 넣어주면 됨
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) { // 코드가 있는지, BEARER로 시작하는지 확인
-            resolvedToken = bearerToken.substring(7); // 앞에 7글자를 지워줌 BEARER가 6글자이고 한칸이 띄어져있기 때문
-        }
-        return resolvedToken;
     }
 
     // 토큰 생성
@@ -100,26 +84,5 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody(); // getBody 안에 들어있는 정보를 가져옴
-    }
-
-    public User checkToken(HttpServletRequest request) {
-        String token = this.resolveToken(request);
-        Claims claims;
-
-        User user = null;
-
-        if (token != null) {
-            if (this.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = this.getUserInfoFromToken(token);
-            } else {
-                throw new ApiException("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
-            }
-            // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new ApiException("사용자 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST)
-            );
-        }
-        return user;
     }
 }

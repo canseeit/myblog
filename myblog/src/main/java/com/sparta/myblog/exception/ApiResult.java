@@ -1,18 +1,19 @@
 package com.sparta.myblog.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Getter
-@NoArgsConstructor
-@ToString
+@AllArgsConstructor
 public class ApiResult {
     private String msg;
     private Integer statusCode;
 
-    public ApiResult(String msg, Integer statusCode) {
-        this.msg = msg;
-        this.statusCode = statusCode;
+    @Override
+    public String toString() {
+        return "ApiResult{" +
+                "msg='" + msg + '\'' +
+                ", statusCode=" + statusCode +
+                '}';
     }
 }

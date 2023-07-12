@@ -3,14 +3,12 @@ package com.sparta.myblog.service;
 import com.sparta.myblog.dto.CommentRequestDto;
 import com.sparta.myblog.dto.CommentResponseDto;
 import com.sparta.myblog.entity.Comment;
-import com.sparta.myblog.repository.CommentRepository;
+import com.sparta.myblog.entity.Post;
 import com.sparta.myblog.exception.ApiException;
 import com.sparta.myblog.exception.ApiResult;
-import com.sparta.myblog.jwt.JwtUtil;
-import com.sparta.myblog.entity.Post;
+import com.sparta.myblog.repository.CommentRepository;
 import com.sparta.myblog.repository.PostRepository;
-import com.sparta.myblog.entity.User;
-import jakarta.servlet.http.HttpServletRequest;
+import com.sparta.myblog.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,36 +20,27 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final JwtUtil jwtUtil;
 
-    @Transactional
-    public CommentResponseDto createComment(CommentRequestDto requestDto, HttpServletRequest request) {
-
-        User user = jwtUtil.checkToken(request);
-
+    public CommentResponseDto createComment(CommentRequestDto requestDto, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(
                 () -> new ApiException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
         );
-
         Comment comment = new Comment();
-        comment.setUser(user);
+        comment.setUser(userDetails.getUser());
         comment.setPost(post);
         comment.setContent(requestDto.getContent());
-
         commentRepository.save(comment);
 
         return new CommentResponseDto(comment);
     }
 
     @Transactional
-    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, UserDetailsImpl userDetails) {
         Comment comment = findCommentById(id);
 
-        // 토큰 확인
-        User user = jwtUtil.checkToken(request);
-
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
-        if (!comment.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
+        if (!comment.getUser().getUsername().equals(userDetails.getUsername())
+                && !userDetails.getRole().equals("ADMIN")) {
             throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -62,14 +51,12 @@ public class CommentService {
     }
 
     @Transactional
-    public ApiResult deleteComment(Long id, HttpServletRequest request) {
+    public ApiResult deleteComment(Long id, UserDetailsImpl userDetails) {
         Comment comment = findCommentById(id);
 
-        // 토큰 확인
-        User user = jwtUtil.checkToken(request);
-
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
-        if (!comment.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
+        if (!comment.getUser().getUsername().equals(userDetails.getUsername())
+                && !userDetails.getRole().equals("ADMIN")) {
             throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -79,10 +66,10 @@ public class CommentService {
     }
 
     private Comment findCommentById(Long id) {
-        // 선택한 게시글 존재 확인
+        // 선택한 댓글 존재 확인
         return commentRepository.findById(id).orElseThrow(
                 () ->
-                        new ApiException("선택한 게시글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+                        new ApiException("선택한 댓글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
         );
     }
 }

@@ -5,10 +5,14 @@ import com.sparta.myblog.dto.ProfileRequestDto;
 import com.sparta.myblog.dto.ProfileResponseDto;
 import com.sparta.myblog.dto.SignupRequestDto;
 import com.sparta.myblog.exception.ApiResult;
+import com.sparta.myblog.security.UserDetailsImpl;
 import com.sparta.myblog.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,22 +23,27 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public void signup(@RequestBody @Valid SignupRequestDto requestDto) {
-        userService.signup(requestDto);
+    public ResponseEntity<ApiResult> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+        try {
+            userService.signup(requestDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ApiResult("중복된 username 입니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+        return ResponseEntity.badRequest().body(new ApiResult("회원가입 성공", HttpStatus.OK.value()));
     }
 
     @GetMapping("/profile")
-    public ProfileResponseDto getProfile(HttpServletRequest request) {
-        return userService.getProfile(request);
+    public ProfileResponseDto getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.getProfile(userDetails);
     }
 
     @PostMapping("/profile")
-    public ApiResult checkPassword(@RequestBody PasswordRequestDto requestDto, HttpServletRequest request) {
-        return userService.checkPassword(requestDto, request);
+    public ApiResult checkPassword(@RequestBody PasswordRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.checkPassword(requestDto, userDetails);
     }
 
     @PutMapping("/profile")
-    public ApiResult updateProfile(@RequestBody ProfileRequestDto requestDto, HttpServletRequest request) {
-        return userService.updateProfile(requestDto, request);
+    public ApiResult updateProfile(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.updateProfile(requestDto, userDetails);
     }
 }

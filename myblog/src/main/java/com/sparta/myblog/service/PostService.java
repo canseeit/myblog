@@ -1,15 +1,13 @@
 package com.sparta.myblog.service;
 
 
-import com.sparta.myblog.exception.ApiException;
-import com.sparta.myblog.exception.ApiResult;
-import com.sparta.myblog.jwt.JwtUtil;
 import com.sparta.myblog.dto.PostRequestDto;
 import com.sparta.myblog.dto.PostResponseDto;
 import com.sparta.myblog.entity.Post;
+import com.sparta.myblog.exception.ApiException;
+import com.sparta.myblog.exception.ApiResult;
 import com.sparta.myblog.repository.PostRepository;
-import com.sparta.myblog.entity.User;
-import jakarta.servlet.http.HttpServletRequest;
+import com.sparta.myblog.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,40 +20,32 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final HttpServletRequest request;
-    private final JwtUtil jwtUtil;
 
-    @Transactional
-    public PostResponseDto createPost(PostRequestDto requestDto) {
+    public PostResponseDto createPost(PostRequestDto requestDto, UserDetailsImpl userDetails) {
 
-        User user = jwtUtil.checkToken(request);
-
-        Post post = new Post(requestDto, user);
+        Post post = new Post(requestDto, userDetails.getUser());
 
         postRepository.save(post);
         return new PostResponseDto(post);
     }
 
-    @Transactional(readOnly = true)
     public List<PostResponseDto> getAllPosts() {
         // 전체 조회
         return postRepository.findAllByOrderByModifiedAtDesc().stream().map(PostResponseDto::new).toList();
     }
 
-    @Transactional(readOnly = true)
     public PostResponseDto findPost(Long id) {
         Post post = findPostById(id);
         return new PostResponseDto(post);
     }
 
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto requestDto) {
+    public PostResponseDto updatePost(Long id, PostRequestDto requestDto, UserDetailsImpl userDetails) {
         Post post = findPostById(id);
-        // 토큰 체크
-        User user = jwtUtil.checkToken(request);
 
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
-        if (!post.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
+        if (!post.getUser().getUsername().equals(userDetails.getUsername())
+                && !userDetails.getRole().equals("ADMIN")) {
             throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -64,13 +54,12 @@ public class PostService {
     }
 
     @Transactional
-    public ApiResult deletePost(Long id) {
+    public ApiResult deletePost(Long id, UserDetailsImpl userDetails) {
         Post post = findPostById(id);
-        // 토큰 체크
-        User user = jwtUtil.checkToken(request);
 
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
-        if (!post.getUser().getUsername().equals(user.getUsername()) && !user.getRole().equals("ADMIN")) {
+        if (!post.getUser().getUsername().equals(userDetails.getUser().getUsername())
+                && !userDetails.getRole().equals("ADMIN")) {
             throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
 
