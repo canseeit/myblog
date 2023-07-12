@@ -24,12 +24,8 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResult> signup(@RequestBody @Valid SignupRequestDto requestDto) {
-        try {
-            userService.signup(requestDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResult("중복된 username 입니다.", HttpStatus.BAD_REQUEST.value()));
-        }
-        return ResponseEntity.badRequest().body(new ApiResult("회원가입 성공", HttpStatus.OK.value()));
+        userService.signup(requestDto);
+        return ResponseEntity.ok().body(new ApiResult("회원가입 성공", HttpStatus.OK.value()));
     }
 
     @GetMapping("/profile")

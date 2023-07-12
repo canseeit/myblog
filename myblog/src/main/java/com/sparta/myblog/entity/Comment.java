@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "comment")
+@Table(name = "comments")
 @NoArgsConstructor
 public class Comment extends Timestamped {
 
@@ -24,6 +24,6 @@ public class Comment extends Timestamped {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "login_id", referencedColumnName = "login_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 }

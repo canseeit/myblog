@@ -12,7 +12,7 @@ import java.util.List;
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
 @Setter
-@Table(name = "post") // 매핑할 테이블의 이름을 지정
+@Table(name = "posts") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor
 public class Post extends Timestamped {
     @Id
@@ -27,10 +27,13 @@ public class Post extends Timestamped {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "login_id", referencedColumnName = "login_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<LikePost> likePostList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, User user) {

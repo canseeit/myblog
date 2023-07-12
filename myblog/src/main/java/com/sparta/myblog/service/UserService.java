@@ -33,9 +33,9 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         // 회원 중복 확인
-        Optional<User> checkId = userRepository.findByUsername(requestDto.getUsername());
-        if (checkId.isPresent()) {
-            throw new ApiException("중복된 ID 입니다.", HttpStatus.BAD_REQUEST);
+        Optional<User> checkUsername = userRepository.findByUsername(requestDto.getUsername());
+        if (checkUsername.isPresent()) {
+            throw new ApiException("중복된 username 입니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 사용자 ROLE 확인
