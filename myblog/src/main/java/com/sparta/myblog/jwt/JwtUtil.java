@@ -1,6 +1,7 @@
 package com.sparta.myblog.jwt;
 
-import com.sparta.myblog.returnvalue.ApiException;
+import com.sparta.myblog.entity.UserRoleEnum;
+import com.sparta.myblog.exception.ApiException;
 import com.sparta.myblog.entity.User;
 import com.sparta.myblog.repository.UserRepository;
 import io.jsonwebtoken.*;
@@ -26,6 +27,8 @@ public class JwtUtil {
 
     // Header Authorization KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    // 사용자 권한 값의 KEY
+    public static final String AUTHORIZATION_KEY = "auth";
     //Token 식별자,  토큰을 만들 때 앞에 붙어서 들어감
     private static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
@@ -55,21 +58,30 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String id) {
+    public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(id) // 공간에 username을 넣음
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 토큰을 언제까지 유효하게 할 것인지 getTime으로 현재 시간을 가지고 오며 현재 시간으로부터 우리가 설정한 시간동안 토큰 유효
-                        .setIssuedAt(date) // 토큰이 언제 만들어졌는가
+                        .setSubject(username) // 공간에 username을 넣음
+                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setIssuedAt(date) // 토큰 발급일
                         .signWith(key, signatureAlgorithm) // 어떤 알고리즘을 사용하여 암호화 할 것인가
                         .compact(); // String 형식의 JWT 토큰으로 반환 됨
     }
 
-    // 토큰 검증
-    private boolean validateToken(String token) {
+    // header 에서 JWT 가져오기
+    public String getJwtFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 
+    // 토큰 검증
+    public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -86,12 +98,11 @@ public class JwtUtil {
     }
 
     // 토큰에서 사용자 정보 가져오기
-    private Claims getUserInfoFromToken(String token) {
+    public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody(); // getBody 안에 들어있는 정보를 가져옴
     }
 
     public User checkToken(HttpServletRequest request) {
-
         String token = this.resolveToken(request);
         Claims claims;
 
@@ -105,7 +116,7 @@ public class JwtUtil {
                 throw new ApiException("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            user = userRepository.findById(claims.getSubject()).orElseThrow(
+            user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new ApiException("사용자 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST)
             );
         }

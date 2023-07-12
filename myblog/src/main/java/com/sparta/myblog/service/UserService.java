@@ -1,15 +1,19 @@
 package com.sparta.myblog.service;
 
-import com.sparta.myblog.returnvalue.ApiException;
-import com.sparta.myblog.returnvalue.ApiResult;
-import com.sparta.myblog.jwt.JwtUtil;
-import com.sparta.myblog.dto.*;
+import com.sparta.myblog.dto.PasswordRequestDto;
+import com.sparta.myblog.dto.ProfileRequestDto;
+import com.sparta.myblog.dto.ProfileResponseDto;
+import com.sparta.myblog.dto.SignupRequestDto;
 import com.sparta.myblog.entity.User;
+import com.sparta.myblog.entity.UserRoleEnum;
+import com.sparta.myblog.jwt.JwtUtil;
 import com.sparta.myblog.repository.UserRepository;
+import com.sparta.myblog.exception.ApiException;
+import com.sparta.myblog.exception.ApiResult;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,41 +23,35 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public ApiResult signup(SignupRequestDto requestDto) {
+    public void signup(SignupRequestDto requestDto) {
+        String username = requestDto.getUsername();
+        String password = passwordEncoder.encode(requestDto.getPassword());
 
         // 회원 중복 확인
-        Optional<User> checkId = userRepository.findById(requestDto.getId());
+        Optional<User> checkId = userRepository.findByUsername(requestDto.getUsername());
         if (checkId.isPresent()) {
             throw new ApiException("중복된 ID 입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 사용자 등록
-        User user = new User(requestDto.getId(), requestDto.getUsername(), requestDto.getPassword(), requestDto.getRole());
-        userRepository.save(user);
-
-        return new ApiResult("회원가입 성공", HttpStatus.OK.value());
-    }
-
-    @Transactional
-    public ApiResult login(LoginRequestDto requestDto, HttpServletResponse response) {
-        // 사용자 확인
-        User user = userRepository.findById(requestDto.getId()).orElseThrow(
-                () -> new ApiException("사용자를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST)
-        );
-
-        // 비밀번호 확인
-        if (!user.getPassword().equals(requestDto.getPassword())) {
-            throw new ApiException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (requestDto.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가합니다.");
+            }
+            role = UserRoleEnum.ADMIN;
         }
-        // JWT Token 생성 및 반환
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getId()));
 
-        return new ApiResult("로그인 성공", HttpStatus.OK.value());
+        // 사용자 등록
+        User user = new User(username, password, role);
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)

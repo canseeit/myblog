@@ -1,4 +1,4 @@
-package com.sparta.myblog.returnvalue;
+package com.sparta.myblog.exception;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
