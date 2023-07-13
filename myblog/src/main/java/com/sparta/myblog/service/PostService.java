@@ -44,7 +44,7 @@ public class PostService {
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
         if (!post.getUser().getUsername().equals(userDetails.getUsername())
                 && !userDetails.getRole().equals("ADMIN")) {
-            throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
 
         post.update(requestDto);
@@ -58,7 +58,7 @@ public class PostService {
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
         if (!post.getUser().getUsername().equals(userDetails.getUser().getUsername())
                 && !userDetails.getRole().equals("ADMIN")) {
-            throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
 
         // 게시글 삭제
@@ -70,7 +70,8 @@ public class PostService {
     private Post findPostById(Long id) {
         // 선택한 게시글 존재 확인
         return postRepository.findById(id).orElseThrow(
-                () -> new ApiException("선택한 게시글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+                () -> new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.")
         );
     }
+
 }

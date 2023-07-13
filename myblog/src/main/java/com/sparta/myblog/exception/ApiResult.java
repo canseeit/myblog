@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ApiResult {
     private String msg;
-    private Integer statusCode;
+    private int statusCode;
 
     @Override
     public String toString() {

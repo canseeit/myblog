@@ -23,7 +23,8 @@ public class CommentService {
 
     public CommentResponseDto createComment(CommentRequestDto requestDto, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(
-                () -> new ApiException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+//                () -> new ApiException("게시글이 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value())
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
         Comment comment = new Comment();
         comment.setUser(userDetails.getUser());
@@ -41,7 +42,8 @@ public class CommentService {
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
         if (!comment.getUser().getUsername().equals(userDetails.getUsername())
                 && !userDetails.getRole().equals("ADMIN")) {
-            throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST);
+//            throw new ApiException("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST.value());
+            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
 
         comment.setContent(requestDto.getContent());
@@ -57,7 +59,8 @@ public class CommentService {
         // 작성자가 일치하지 않거나 ADMIN이 아니면 던지기
         if (!comment.getUser().getUsername().equals(userDetails.getUsername())
                 && !userDetails.getRole().equals("ADMIN")) {
-            throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
+//            throw new ApiException("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST.value());
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
 
         commentRepository.delete(comment);
@@ -69,7 +72,8 @@ public class CommentService {
         // 선택한 댓글 존재 확인
         return commentRepository.findById(id).orElseThrow(
                 () ->
-                        new ApiException("선택한 댓글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST)
+//                        new ApiException("선택한 댓글은 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value())
+                        new IllegalArgumentException("댓글이 존재하지 않습니다.")
         );
     }
 }

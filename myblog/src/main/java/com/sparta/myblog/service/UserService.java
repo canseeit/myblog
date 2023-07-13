@@ -35,7 +35,7 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(requestDto.getUsername());
         if (checkUsername.isPresent()) {
-            throw new ApiException("중복된 username 입니다.", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("중복된 username 입니다.");
         }
 
         // 사용자 ROLE 확인
@@ -60,7 +60,7 @@ public class UserService {
     public ApiResult checkPassword(PasswordRequestDto requestDto, UserDetailsImpl userDetails) {
         // 비밀번호 확인
         if (!userDetails.getPassword().equals(requestDto.getPassword())) {
-            throw new ApiException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         return new ApiResult("프로필 수정으로 넘어가기", HttpStatus.OK.value()); // 수정 페이지로 넘어가기 전 비밀번호 확인
     }

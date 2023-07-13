@@ -1,14 +1,13 @@
 package com.sparta.myblog.exception;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
-public class ApiException extends RuntimeException {
-    private final String msg;
-    private final HttpStatus status;
+public class ApiException {
+    private String msg;
+    private int status;
 
-    public ApiException(String message, HttpStatus status) {
+    public ApiException(String message, int status) {
         this.msg = message;
         this.status = status;
     }

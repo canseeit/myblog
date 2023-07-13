@@ -3,6 +3,7 @@ package com.sparta.myblog.config;
 import com.sparta.myblog.jwt.JwtUtil;
 import com.sparta.myblog.security.JwtAuthenticationFilter;
 import com.sparta.myblog.security.JwtAuthorizationFilter;
+import com.sparta.myblog.security.LoginSuccessHandler;
 import com.sparta.myblog.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -38,8 +40,13 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return new LoginSuccessHandler();
+    }
+
+    @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, successHandler());
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
