@@ -11,11 +11,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="17">
-      <module name="myblog.myblog" target="17" />
       <module name="myblog.myblog.main" target="17" />
-      <module name="myblog.myblog.main~1" target="17" />
       <module name="myblog.myblog.test" target="17" />
-      <module name="myblog.myblog.test~1" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

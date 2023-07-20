@@ -1,6 +1,5 @@
 package com.sparta.myblog.dto;
 
-import com.sparta.myblog.entity.UserRoleEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -10,8 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SignupRequestDto {
-
-    private Long id;
 
     @NotBlank
     @Size(min = 4, max = 10, message = "최소 4글자에서 최대 10글자까지 입력 가능합니다.")

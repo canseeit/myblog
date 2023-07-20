@@ -11,6 +11,7 @@ import com.sparta.myblog.exception.ApiResult;
 import com.sparta.myblog.repository.UserRepository;
 import com.sparta.myblog.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+    @Value("${user.admin.token}")
+    private String ADMIN_TOKEN;
 
     @Transactional
     public void signup(SignupRequestDto requestDto) {
